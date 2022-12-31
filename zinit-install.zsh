@@ -1556,10 +1556,11 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     local url=https://$urlpart
   fi
     # apple-darwin '(apple|darwin|mac|macos|os(-|)x|dmg)'
+    # apple-darwin '*((#s)|/)*(apple|darwin|mac|macos|osx|dmg)*((#e)|/)*'
   local -A matchstr
   matchstr=(
     aarch64 "(arm|arm64|aarch64)"
-    apple-darwin '*((#s)|/)*(apple|darwin|mac|macos|os(-|)x|dmg)*((#e)|/)*'
+    apple-darwin '(apple|darwin|mac|macos|osx|dmg)'
     arm64 '(arm64|aarch64|arm(-|v|)8)'
     armv7 'arm(-|v|)7'
     armv6 'arm(-|v|)6'
@@ -1571,7 +1572,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     linux-musleabihf 'linux[-_]musleabihf'
     msys '(win((dows|32|64))|cygwin)'
     windows '(win((dows|32|64))|cygwin)'
-    x86_64 "(amd|amd64|x64|x86|x86_64|64bit)"
+    x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(a(arch|rm)64)'
   )
     # x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(linux32|eabi(hf|)|powerpc|ppc64(le|)|[-_]mips*|aarch64|riscv(64|)|s390x|[-_.]arm*)*'
   init_list=( ${(@f)"$( { .zinit-download-file-stdout $url || .zinit-download-file-stdout $url 1; } 2>/dev/null | command grep -o 'href=./'$user'/'$plugin'/releases/download/[^"]\+')"} )
