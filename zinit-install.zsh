@@ -1572,7 +1572,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     linux-musleabihf 'linux[-_]musleabihf'
     msys '(win((dows|32|64))|cygwin)'
     windows '(win((dows|32|64))|cygwin)'
-    x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(a(arch|rm)64)'
+    x86_64 '((amd(64|))|(x(64|86))|x86_64|64bit)'
   )
     # x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(linux32|eabi(hf|)|powerpc|ppc64(le|)|[-_]mips*|aarch64|riscv(64|)|s390x|[-_.]arm*)*'
   init_list=( ${(@f)"$( { .zinit-download-file-stdout $url || .zinit-download-file-stdout $url 1; } 2>/dev/null | command grep -o 'href=./'$user'/'$plugin'/releases/download/[^"]\+')"} )
@@ -1594,7 +1594,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
         filtered=( ${(M)list[@]:#(#i)*((#s)|/)*${~matchstr[${part}]}*((#e)|/)*} ) \
           && (( $#filtered > 0 )) \
           && list=( ${filtered[@]} )
-        # +zinit-message "[{pre}gh-r{rst}]:{info} filtered ->{rst}{nl} ${(@)filtered}{nl}"
+        +zinit-message "[{pre}gh-r{rst}]:{info} filtered ->{rst}{nl} ${(@)filtered}{nl}"
       }
       # if (( $#list > 1 )) { filtered=( ${(M)list[@]:#(#i)*((#s)|/)*${~matchstr[${parts[(e)1]}]}*((#e)|/)*} ); (( $#filtered > 0 )) && list=( ${filtered[@]} ) }
       # if (( $#list > 1 )) { filtered=( ${(M)list[@]:#(#i)*((#s)|/)*${~matchstr[${parts[(e)2]}]}*((#e)|/)*} ); (( $#filtered > 0 )) && list=( ${filtered[@]} ) }
