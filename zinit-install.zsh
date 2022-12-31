@@ -1566,13 +1566,13 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     armv6 'arm(-|v|)6'
     cygwin '(win((dows|32|64))|cygwin)'
     linux-android '(apk|android|linux-android)'
-    linux-gnu '*(linux|linux-gnu|unknown-linux-gnu)*~*(android)*'
-    linux-gnueabihf '[lL]inux[-_]gnueabihf'
+    linux-gnu '*(linux|linux-gnu|unknown-linux-gnu(#e))*~*(android)*'
+    linux-gnueabihf 'linux[-_]gnueabihf'
     linux-musl '*(linux|linux-musl|unknown-linux-musl)*~*(android)*'
     linux-musleabihf 'linux[-_]musleabihf'
     msys '(win((dows|32|64))|cygwin)'
     windows '(win((dows|32|64))|cygwin)'
-    x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(ar(ch|m)*64)*'
+    x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(aarch|(arm(v[0-9]|)))*'
   )
     # x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(linux32|eabi(hf|)|powerpc|ppc64(le|)|[-_]mips*|aarch64|riscv(64|)|s390x|[-_.]arm*)*'
   init_list=( ${(@f)"$( { .zinit-download-file-stdout $url || .zinit-download-file-stdout $url 1; } 2>/dev/null | command grep -o 'href=./'$user'/'$plugin'/releases/download/[^"]\+')"} )
