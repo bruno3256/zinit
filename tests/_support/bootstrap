@@ -10,12 +10,12 @@ GIT_REPO=$(git rev-parse --show-toplevel)
 
 _mktemp_cmd='mktemp'
 if (( ${+commands[gmktemp]} )); then
-  _mktemp_cmd='gmktemp'
+    _mktemp_cmd='gmktemp'
 fi
 TMP_ZUNIT=$(${_mktemp_cmd} --directory --tmpdir="${GIT_REPO}/tests/_support")
 if [[ ! -d ${TMP_ZUNIT} ]]; then
-  error "zunit temp dir not found"
-  exit 1
+    error "zunit temp dir not found"
+    exit 1
 fi
 
 typeset -gAH ZINIT;
@@ -27,28 +27,36 @@ ZINIT[SNIPPETS_DIR]=$ZINIT[HOME_DIR]/snippets;
 ZINIT[ZCOMPDUMP_PATH]=$ZINIT[HOME_DIR]/zcompdump;
 ZPFX=$ZINIT[HOME_DIR]/polaris;
 
-git diff > $ZINIT[HOME_DIR]/unstaged.diff
-info 'creating test env' \
-  && git clone \
-      --dissociate \
-      --local \
-      --no-hardlinks \
-      --reference "$GIT_REPO" \
-      "$GIT_REPO" \
-    "${TMP_ZUNIT}"/zinit.git \
-  || error 'failed to create zinit copy for test env' \
-  &&  [[ -s $ZINIT[HOME_DIR]/unstaged.diff ]] \
-  && git -C $ZINIT[BIN_DIR] apply $ZINIT[HOME_DIR]/unstaged.diff \
-  && info 'installing zinit' \
-  && command chmod g-rwX $ZINIT[HOME_DIR] \
-  && zcompile $ZINIT[BIN_DIR]/zinit.zsh \
-  && info 'successfully created zunit env' \
-  || error 'failed to create zunit env'
+command git diff > ${ZINIT[HOME_DIR]}/unstaged.diff
+info 'creating test env'
+git clone \
+    --dissociate \
+    --local \
+    --no-hardlinks \
+    --reference "${GIT_REPO}" \
+    "${GIT_REPO}" \
+    "${ZINIT[BIN_DIR]}"
+if (( $? != 0 )); then
+    error "Unable to copy ${GIT_REPO} to ${TMP_ZUNIT}" >&2
+    exit 1
+fi
 
-source $ZINIT[BIN_DIR]/zinit.zsh \
-  && autoload -Uz _zinit \
-  && (( ${+_comps} )) \
-  && _comps[zinit]=_zinit
+if [[ -s $ZINIT[HOME_DIR]/unstaged.diff ]]; then
+    (
+        git -C $ZINIT[BIN_DIR] apply $ZINIT[HOME_DIR]/unstaged.diff && \
+            chmod g-rwX "${ZINIT[HOME_DIR]}" && \
+            zcompile "${ZINIT[BIN_DIR]}/zinit.zsh"
+    )
+fi
+(( $? != 0 )) && { error "Unable to copy ${GIT_REPO} to ${TMP_ZUNIT}" >&2; exit 1 }
+
+{
+    source $ZINIT[BIN_DIR]/zinit.zsh && \
+        autoload -Uz _zinit && \
+        (( ${+_comps} )) && \
+        _comps[zinit]=_zinit
+}
+(( $? != 0 )) && { error "Unable to copy ${GIT_REPO} to ${TMP_ZUNIT}" >&2; exit 1 }
 # ]]]
 # Install Annexes [[[
 info 'installing test dependencies'
