@@ -1541,7 +1541,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
   local plugin="$2" urlpart="$3" user="$1"
   local -a bpicks filtered init_list list parts
   parts=(${(@s:;:)$(.zi::get-architecture)})
-  # +zinit-message "[{pre}gh-r{rst}]:{info} filters -> ${(@)parts}"
+  +zinit-message "[{pre}gh-r{rst}]:{info} filters -> ${(@)parts}"
   if [[ -z $urlpart ]]; then
     local tag_version=${ICE[ver]}
     if [[ -z $tag_version ]]; then
@@ -1559,7 +1559,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     # apple-darwin '*((#s)|/)*(apple|darwin|mac|macos|osx|dmg)*((#e)|/)*'
   local -A matchstr
   matchstr=(
-    aarch64 "(arm|arm64|aarch64)"
+    aarch64 '((arm|aarch)64)'
     apple-darwin '(apple|darwin|mac|macos[_\.]|osx|dmg)'
     arm64 '(arm64|aarch64|arm(-|v|)8)'
     armv7 'arm(-|v|)7'
