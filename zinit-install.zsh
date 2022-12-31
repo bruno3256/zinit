@@ -1559,7 +1559,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
   local -A matchstr
   matchstr=(
     aarch64 "(arm|arm64|aarch64)"
-    apple-darwin '*((#s)|/)*(apple|darwin|mac|macos|os(-|)x|dmg)*((#e)|/)*~*(linux|musl|gnu)*'
+    apple-darwin '*((#s)|/)*(apple|darwin|mac|macos|os(-|)x|dmg)*((#e)|/)*'
     arm64 '(arm64|aarch64|arm(-|v|)8)'
     armv7 'arm(-|v|)7'
     armv6 'arm(-|v|)6'
