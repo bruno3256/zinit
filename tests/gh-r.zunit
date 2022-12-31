@@ -1,7 +1,7 @@
 #!/usr/bin/env zunit
 
 @setup {
-  zinit default-ice --quiet from"gh-r" lbin"!" nocompile nocompletions
+  zinit default-ice from'gh-r' nocompile lbin'!'
   ZBIN="${ZPFX}/bin"
 }
 
@@ -66,25 +66,21 @@
 # TODO: gh-r does not find older assets anymore (possible bug from https://github.com/zdharma-continuum/zinit/pull/373)
 @test 'bit' { # A tool for composable software development
   skip 'skip bit test due to gh-r version bug'
-  run zinit lbin'!* -> bit' for @teambit/bit; assert $state equals 0
+  run zinit lbin'!bit* -> bit' for @teambit/bit; assert $state equals 0
   local bit="$ZBIN/bit"; assert "$bit" is_executable
   $bit --version; assert $state equals 0
 }
 @test 'blast' { # Blast is a simple tool for API load testing and batch jobs
+  [[ $OSTYPE =~ 'darwin*' ]] && skip 'Blast test skipped on Darwin'
   run zinit for @dave/blast; assert $state equals 0
   local blast="$ZBIN/blast"; assert "$blast" is_executable
-  $blast --dry; assert $state equals 0
+  $blast --dry=1; assert $state equals 0
 }
 @test 'boilr' { # boilerplate template manager that generates files or directories from template repositories
-  run zinit for @tmrts/boilr
-  assert $state equals 0
-  [[ $OSTYPE =~ 'darwin*' ]] \
-      && assert "$output" contains 'darwin' \
-      && pass
-  local boilr="$ZBIN/boilr"
-  assert "$boilr" is_executable
-  $boilr --help
-  assert $state equals 0
+  run zinit for @tmrts/boilr; assert $state equals 0
+  local boilr="$ZBIN/boilr"; assert "$boilr" is_executable
+  $boilr --help; assert $state equals 0
+  [[ $OSTYPE =~ 'darwin*' ]] && assert "$output" contains 'darwin' && pass
 }
 @test 'bottom' { # Yet another cross-platform graphical process/system monitor
   run zinit lbin'!**/btm' for ClementTsang/bottom; assert $state equals 0
@@ -112,28 +108,25 @@
   $checkmake --version; assert $state equals 0
 }
 @test 'cog' { # Containers for machine learning
-  run zinit lbin'!cog* -> cog' for replicate/cog; assert $state equals 0
+  run zinit lbin'!cog* -> cog' for @replicate/cog; assert $state equals 0
   local cog="$ZBIN/cog"; assert "$cog" is_executable
   $cog --version; assert $state equals 0
 }
 @test 'compress' { # Optimized Go Compression Packages
-  run zinit bpick'*.tar.gz' lbin'!s2c;s2d;s2sx;' for klauspost/compress; assert $state equals 0
+  run zinit bpick'*.tar.gz' lbin'!s2c;s2d;s2sx;' for @klauspost/compress; assert $state equals 0
   local compress="$ZBIN/s2c"; assert "$compress" is_executable
   $compress --help; assert $state equals 0
 }
 @test 'create-go-app' { # Create a new production-ready project with backend, frontend and deploy automation by running one CLI command
-  run zinit lbin'!**/cgapp' for create-go-app/cli
-  assert $state equals 0
-  [[ $OSTYPE =~ 'darwin*' && $(uname -p) == 'arm' ]] \
-      && assert "$output" contains 'macOS' \
-      && pass
-  local cgapp="$ZBIN/cgapp"
-  assert "$cgapp" is_executable
-  $cgapp --version
-  assert $state equals 0
+  run zinit lbin'!' for @create-go-app/cli; assert $state equals 0
+  local cgapp="$ZBIN/cgapp"; assert "$cgapp" is_executable
+  $cgapp --versionl assert $state equals 0
+  # [[ $OSTYPE =~ 'darwin*' && $(uname -p) == 'arm' ]] \
+  #     && assert "$output" contains 'macOS' \
+  #     && pass
 }
-@test 'csview' { # Pretty csv viewer for cli with cjk/emoji support.
-  run zinit for wfxr/csview; assert $state equals 0
+@test 'csview' { # Pretty csv viewer for cli with cjk/emoji support
+  run zinit for @wfxr/csview; assert $state equals 0
   local csview="$ZBIN/csview"; assert "$csview" is_executable
   $csview --version; assert $state equals 0
 }
@@ -194,7 +187,7 @@
   $etcd --version; assert $state equals 0
 }
 @test 'exa' { # A modern replacement for ls
-  run zinit lbin'!**/exa' for ogham/exa; assert $state equals 0
+  run zinit lbin'!**/exa' for @ogham/exa; assert $state equals 0
   local exa="$ZBIN/exa"; assert "$exa" is_executable
   $exa --version; assert $state equals 0
 }
@@ -240,7 +233,7 @@
   $git_sizer --version; assert $state equals 0
 }
 @test 'gh-cli' { # GitHub’s official command line tool
-  run zinit lbin'!**/gh' for cli/cli; assert $state equals 0
+  run zinit lbin'!**/gh' for @cli/cli; assert $state equals 0
   local gh_cli="$ZBIN/gh"; assert "$gh_cli" is_executable
   $gh_cli --version; assert $state equals 0
 }
@@ -332,7 +325,7 @@
   $gron --version; assert $state equals 0
 }
 @test 'hadolint' { # Dockerfile linter, validate inline bash, written in Haskell
-  run zinit lbin'!* -> hadolint' for @hadolint/hadolint; assert $state equals 0
+  run zinit ver'v2.12.1-beta' lbin'!hadolint* -> hadolint' for @hadolint/hadolint; assert $state equals 0
   local hadolint="$ZBIN/hadolint"; assert "$hadolint" is_executable
   $hadolint --version; assert $state equals 0
 }
@@ -473,7 +466,7 @@ $kopia --version; assert $state equals 0
   $mkcert --version; assert $state equals 0
 }
 @test 'mmake' { # A Make/rake-like dev tool using Go
-  run zinit for ver'v1.3.0' lbin'!* -> mmake' @tj/mmake; assert $state equals 0
+  run zinit for ver'v1.4.0' @tj/mmake; assert $state equals 0
   local mmake="$ZBIN/mmake"; assert "$mmake" is_executable
   $mmake --version; assert $state equals 0
 }
