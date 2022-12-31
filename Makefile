@@ -50,5 +50,10 @@ tags/vim: ## Build the Vim-style ctags file
 test:
 	zunit run
 
+.PHONY: tests/*.zunit
+tests/*.zunit:
+	$(info $(@))
+	zunit run --verbose $(@)
+
 zwc:
 	$(or $(ZSH),:) -fc 'for f in *.zsh; do zcompile -R -- $$f.zwc $$f || exit; done'

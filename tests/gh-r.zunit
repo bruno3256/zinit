@@ -1,8 +1,8 @@
 #!/usr/bin/env zunit
 
 @setup {
-  zinit default-ice as'null' from"gh-r" lbin'!' nocompile nocompletions
-  ZBIN=$ZPFX/bin
+  zinit default-ice --quiet from"gh-r" lbin"!" nocompile nocompletions
+  ZBIN="${ZPFX}/bin"
 }
 
 @test 'act' { # Run your GitHub Actions locally
@@ -31,11 +31,12 @@
   local assh="$ZBIN/assh"; assert "$assh" is_executable
   $assh --version; assert $state equals 0
 }
-# @test 'atmos' { # Universal Tool for DevOps and Cloud Automation (works with terraform, helm, helmfile, etc)
-#   run zinit for lbin'!* -> atmos' @cloudposse/atmos; assert $state equals 0
-#   local atmos="$ZBIN/atmos"; assert "$atmos" is_executable
-#   $atmos version; assert $state equals 0
-# }
+@test 'atmos' { # Universal Tool for DevOps and Cloud Automation (works with terraform, helm, helmfile, etc)
+  skip 'skip atmos test due to gh-r version bug'
+  # run zinit for lbin'!* -> atmos' @cloudposse/atmos; assert $state equals 0
+  # local atmos="$ZBIN/atmos"; assert "$atmos" is_executable
+  # $atmos version; assert $state equals 0
+}
 @test 'atuin' { #  Magical shell history
   run zinit for @ellie/atuin; assert $state equals 0
   local atuin="$ZBIN/atuin"; assert "$atuin" is_executable
@@ -63,11 +64,12 @@
   $bazel --version; assert $state equals 0
 }
 # TODO: gh-r does not find older assets anymore (possible bug from https://github.com/zdharma-continuum/zinit/pull/373)
-# @test 'bit' { # A tool for composable software development
-#   run zinit lbin'!* -> bit' for @teambit/bit; assert $state equals 0
-#   local bit="$ZBIN/bit"; assert "$bit" is_executable
-#   $bit --version; assert $state equals 0
-# }
+@test 'bit' { # A tool for composable software development
+  skip 'skip bit test due to gh-r version bug'
+  run zinit lbin'!* -> bit' for @teambit/bit; assert $state equals 0
+  local bit="$ZBIN/bit"; assert "$bit" is_executable
+  $bit --version; assert $state equals 0
+}
 @test 'blast' { # Blast is a simple tool for API load testing and batch jobs
   run zinit for @dave/blast; assert $state equals 0
   local blast="$ZBIN/blast"; assert "$blast" is_executable
@@ -146,8 +148,7 @@
   $dive --version; assert $state equals 0
 }
 @test 'docker-buildx' { # A monitor of resources
-  run zinit for as'completions' atclone'./buildx* completion zsh > _buildx' lbin'!buildx-* -> buildx' @docker/buildx
-  assert $state equals 0
+  run zinit for lbin'!* -> buildx' @docker/buildx; assert $state equals 0
   local buildx="$ZBIN/buildx"; assert "$buildx" is_executable
   $buildx version; assert $state equals 0
 }
@@ -362,7 +363,7 @@
   local hoofli="$ZBIN/hoofli"; assert "$hoofli" is_executable
   $hoofli -h; assert $state equals 0
 }
-@test 'hors' { # instant coding answers via the command line (howdoi in rust)
+@test 'hors' { # instant coding answers via the command line
   if [[ $OSTYPE =~ 'linux.*' ]]; then skip 'WindSoilder/hors only tested for macOS'; fi
   run zinit for @WindSoilder/hors; assert $state equals 0
   local hors="$ZBIN/hors"; assert "$hors" is_executable
@@ -379,7 +380,7 @@
   $igo version; assert $state equals 0
 }
 @test 'insect' { # High precision scientific calculator with support for physical units
-  run zinit lbin'!* -> insect' for @sharkdp/insect; assert $state equals 0
+  run zinit ver'v5.7.0' lbin'!* -> insect' for @sharkdp/insect; assert $state equals 0
   local insect="$ZBIN/insect"; assert "$insect" is_executable
   $insect help; assert $state equals 0
 }
@@ -398,7 +399,7 @@
   local just="$ZBIN/just"; assert "$just" is_executable
   $just --version; assert $state equals 0
 }
-@test 'keepassxc' { # a cross-platform community-driven port of the Windows application 'Keepass Password Safe'
+@test 'keepassxc' { # a cross-platform community-driven port of the Windows application Keepass Password Safe
   if [[ $OSTYPE =~ 'linux.*' ]]; then skip 'keepassxc test only ran on macOS'; fi
   run zinit for @keepassxreboot/keepassxc; assert $state equals 0
   local keepassxc="$ZBIN/keepassxc"; assert "$keepassxc" is_executable
@@ -501,17 +502,18 @@ $kopia --version; assert $state equals 0
   local navi="$ZBIN/navi" && assert "$navi" is_executable
   $navi --version && assert $state equals 0
 }
-# @test 'neovim::appimage' { # Vim-fork focused on extensibility and usability
-#   run zinit bpick'*appimage*' id-as'neovim/appimage' for neovim/neovim
-#   assert $state equals 0; assert $output contains 'nvim.appimage'
-#   assert "$ZINIT[PLUGINS_DIR]/neovim---appimage/nvim.appimage" is_file
-# }
-# @test 'neovim::binary' { # Vim-fork focused on extensibility and usability
-#   [[ $OSTYPE =~ 'darwin*' ]] && skip 'Neovim realease binary broken for macOS as of May 3rd, 2022'
-#   run zinit lbin'!**/nvim' id-as'neovim/binary' for neovim/neovim; assert $state equals 0; assert $output does_not_contain 'appimage'
-#   local nvim="$ZBIN/nvim"; assert "$nvim" is_executable
-#   $nvim --version; assert $state equals 0
-# }
+@test 'neovim::appimage' { # Vim-fork focused on extensibility and usability
+  skip 'neovim::appimage test'
+  run zinit bpick'*appimage*' id-as'neovim/appimage' for neovim/neovim
+  assert $state equals 0; assert $output contains 'nvim.appimage'
+  assert "$ZINIT[PLUGINS_DIR]/neovim---appimage/nvim.appimage" is_file
+}
+@test 'neovim::binary' { # Vim-fork focused on extensibility and usability
+  skip 'neovim::binary test'
+  run zinit lbin'!**/nvim' id-as'neovim/binary' for neovim/neovim; assert $state equals 0; assert $output does_not_contain 'appimage'
+  local nvim="$ZBIN/nvim"; assert "$nvim" is_executable
+  $nvim --version; assert $state equals 0
+}
 @test 'onefetch' { # Git repository summary on your terminal
   run zinit for o2sh/onefetch; assert $state equals 0
   local onefetch="$ZBIN/onefetch"; assert "$onefetch" is_executable
@@ -615,7 +617,7 @@ $kopia --version; assert $state equals 0
   $tealdeer --version; assert $state equals 0
 }
 @test 'tokei' { # Count your code, quickly.
-  run zinit for @XAMPPRocky/tokei; assert $state equals 0
+  run zinit lbin'!*tokei -> tokei' ver'v12.1.1' for @XAMPPRocky/tokei; assert $state equals 0
   local tokei="$ZBIN/tokei"; assert "$tokei" is_executable
   $tokei --version; assert $state equals 0
 }
