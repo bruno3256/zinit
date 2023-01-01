@@ -32,7 +32,7 @@
   $assh --version; assert $state equals 0
 }
 @test 'atmos' { # Universal Tool for DevOps and Cloud Automation (works with terraform, helm, helmfile, etc)
-  skip 'skip atmos test due to gh-r version bug'
+  skip 'null'
   # run zinit for lbin'!* -> atmos' @cloudposse/atmos; assert $state equals 0
   # local atmos="$ZBIN/atmos"; assert "$atmos" is_executable
   # $atmos version; assert $state equals 0
@@ -210,7 +210,7 @@
   $fzf --version; assert $state equals 0
 }
 @test 'gaper' { # Builds and restarts a Go project when it crashes or some watched file changes
-  if [[ ! $OSTYPE =~ 'linux.*' ]]; then skip; fi
+  if [[ ! $OSTYPE =~ 'linux.*' ]]; then skip' '; fi
   run zinit lbin'!**/gaper' for @maxcnunes/gaper; assert $state equals 0
   local gaper="$ZBIN/gaper"; assert "$gaper" is_executable
   $gaper --version; assert $state equals 0
@@ -391,7 +391,7 @@
   $just --version; assert $state equals 0
 }
 @test 'keepassxc' { # a cross-platform community-driven port of the Windows application Keepass Password Safe
-  [[ $OSTYPE =~ 'linux.*' ]] && skip
+  [[ $OSTYPE =~ 'linux.*' ]] && skip 'null'
   run zinit for @keepassxreboot/keepassxc; assert $state equals 0
   local keepassxc="$ZBIN/keepassxc"; assert "$keepassxc" is_executable
   $keepassxc -v; assert $state equals 0
@@ -432,7 +432,7 @@ $kopia --version; assert $state equals 0
   $lnav --version; assert $state equals 0
 }
 @test 'lstf' { # The aggregated TCP flows printer in Linux
-  [[ ! $OSTYPE =~ 'linux.*' ]] && skip
+  [[ ! $OSTYPE =~ 'linux.*' ]] && skip 'null'
   run zinit for @yuuki/lstf; assert $state equals 0
   local lstf="$ZBIN/lstf"; assert "$lstf" is_executable
   $lstf --version; assert $state equals 0
@@ -443,7 +443,7 @@ $kopia --version; assert $state equals 0
   $mage -version; assert $state equals 0
 }
 @test 'mas' { # Mac App Store command line interface
-  [[ ! $OSTYPE =~ 'darwin.*' ]] && skip
+  [[ ! $OSTYPE =~ 'darwin.*' ]] && skip 'null'
   run zinit lbin'!**/bin/mas' for @mas-cli/mas; assert $state equals 0
   local mas="$ZBIN/mas"; assert "$mas" is_executable
   $mas version; assert $state equals 0
@@ -494,13 +494,13 @@ $kopia --version; assert $state equals 0
   $navi --version && assert $state equals 0
 }
 @test 'neovim::appimage' { # Vim-fork focused on extensibility and usability
-  skip
+  skip 'null'
   run zinit bpick'*appimage*' id-as'neovim/appimage' for neovim/neovim
   assert $state equals 0; assert $output contains 'nvim.appimage'
   assert "$ZINIT[PLUGINS_DIR]/neovim---appimage/nvim.appimage" is_file
 }
 @test 'neovim::binary' { # Vim-fork focused on extensibility and usability
-  skip
+  skip 'null'
   run zinit lbin'!**/nvim' id-as'neovim/binary' for neovim/neovim; assert $state equals 0; assert $output does_not_contain 'appimage'
   local nvim="$ZBIN/nvim"; assert "$nvim" is_executable
   $nvim --version; assert $state equals 0

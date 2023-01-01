@@ -1488,26 +1488,6 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
   builtin emulate -LR zsh ${=${options[xtrace]:#off}:+-o xtrace}
   setopt extendedglob warncreateglobal typesetsilent noshortloops
   local RETVAL _clibtype="gnu" _cputype="$(uname -m)" _ostype="$(uname -s)"
-  case "$_ostype" in
-    (Darwin)
-      _ostype=apple-darwin
-      ;;
-    (FreeBSD)
-      _ostype=unknown-freebsd
-      ;;
-    (Linux)
-      if [[ -n /lib/*musl*(#qN) ]] || (( ${+commands[musl-gcc]} )) { 
-        _clibtype="musl"
-      }
-      _ostype=linux-$_clibtype
-      ;;
-    (MINGW* | MSYS* | CYGWIN* | Windows_NT)
-      _ostype=pc-windows-gnu
-      ;;
-    (*)
-      +zinit-message -n "{pre}gh-r:{error} unsupported OS: {obj}$_ostype{rst}"
-      ;;
-  esac
   case "$_cputype" in
     (aarch64 | arm64)
       _cputype='aarch64'
@@ -1528,7 +1508,29 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
       +zinit-message -n "{pre}gh-r:{error} unsupported CPU: {obj}$_cputype{rst}"
       ;;
   esac
-  RETVAL="${_cputype};${_ostype}"
+  case "$_ostype" in
+    (Darwin)
+      _ostype=apple-darwin
+      RETVAL="${_ostype};${_cputype};${_ostype};"
+      ;;
+    (FreeBSD)
+      _ostype=unknown-freebsd
+      ;;
+    (Linux)
+      if [[ -n /lib/*musl*(#qN) ]] || (( ${+commands[musl-gcc]} )) { 
+        _clibtype="musl"
+      }
+      _ostype=linux-$_clibtype
+      RETVAL="${_cputype};${_ostype}"
+      ;;
+    (MINGW* | MSYS* | CYGWIN* | Windows_NT)
+      _ostype=pc-windows-gnu
+      RETVAL="${_cputype};${_ostype};"
+      ;;
+    (*)
+      +zinit-message -n "{pre}gh-r:{error} unsupported OS: {obj}$_ostype{rst}"
+      ;;
+  esac
   echo "${RETVAL}"
 } # ]]]
 
@@ -1559,10 +1561,12 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
   fi
     # apple-darwin '(apple|darwin|mac|macos|os(-|)x|dmg)'
     # apple-darwin '*((#s)|/)*(apple|darwin|mac|macos|osx|dmg)*((#e)|/)*'
+    #(apple|darwin|mac|macos|os(-|)x|dmg)
+    # apple-darwin '(apple|darwin|macos[\.\_]|osx|dmg)'
   local -A matchstr
   matchstr=(
     aarch64 '((arm|aarch)64)'
-    apple-darwin '(apple|darwin|mac|macos[_\.]|osx|dmg)'
+    apple-darwin '(apple|darwin|dmg|macos[\.\?]|osx)'
     arm64 '(arm64|aarch64|arm(-|v|)8)'
     armv7 'arm(-|v|)7'
     armv6 'arm(-|v|)6'
