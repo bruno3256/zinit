@@ -1,7 +1,7 @@
 #!/usr/bin/env zunit
 
 @setup {
-  zinit default-ice from'gh-r' nocompile lbin'!'
+  zinit default-ice --quiet from'gh-r' nocompile lbin'!'
   ZBIN="${ZPFX}/bin"
 }
 
@@ -79,8 +79,8 @@
 @test 'boilr' { # boilerplate template manager that generates files or directories from template repositories
   run zinit for @tmrts/boilr; assert $state equals 0
   local boilr="$ZBIN/boilr"; assert "$boilr" is_executable
+  [[ $OSTYPE =~ 'darwin*' ]] && assert "$output" contains "darwin_amd64" && pass
   $boilr --help; assert $state equals 0
-  [[ $OSTYPE =~ 'darwin*' ]] && assert "$output" contains 'darwin' && pass
 }
 @test 'bottom' { # Yet another cross-platform graphical process/system monitor
   run zinit lbin'!**/btm' for ClementTsang/bottom; assert $state equals 0
@@ -118,12 +118,10 @@
   $compress --help; assert $state equals 0
 }
 @test 'create-go-app' { # Create a new production-ready project with backend, frontend and deploy automation by running one CLI command
-  run zinit lbin'!' for @create-go-app/cli; assert $state equals 0
+  run zinit for id-as'cgapp' @create-go-app/cli; assert $state equals 0
   local cgapp="$ZBIN/cgapp"; assert "$cgapp" is_executable
-  $cgapp --versionl assert $state equals 0
-  # [[ $OSTYPE =~ 'darwin*' && $(uname -p) == 'arm' ]] \
-  #     && assert "$output" contains 'macOS' \
-  #     && pass
+  [[ $OSTYPE =~ 'darwin*' ]] && assert "$output" contains "macOS_$(uname -m)" && pass
+  $cgapp --version; assert $state equals 0
 }
 @test 'csview' { # Pretty csv viewer for cli with cjk/emoji support
   run zinit for @wfxr/csview; assert $state equals 0
