@@ -75,7 +75,7 @@ ____
  
 ____
 
-Has 43 line(s). Calls functions:
+Has 47 line(s). Calls functions:
 
  .zi::get-architecture
  `-- zinit.zsh/+zinit-message
@@ -285,7 +285,7 @@ ____
  
 ____
 
-Has 75 line(s). Calls functions:
+Has 78 line(s). Calls functions:
 
  .zinit-get-latest-gh-r-url-part
  `-- zinit.zsh/+zinit-message
