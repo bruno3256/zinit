@@ -1572,7 +1572,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     linux-musleabihf 'linux[-_]musleabihf'
     msys '(win((dows|32|64))|cygwin)'
     windows '(win((dows|32|64))|cygwin)'
-    x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(aarch|arm)64*'
+    x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*((aarch|arm)64|)*'
   )
     # x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(linux32|eabi(hf|)|powerpc|ppc64(le|)|[-_]mips*|aarch64|riscv(64|)|s390x|[-_.]arm*)*'
   init_list=( ${(@f)"$( { .zinit-download-file-stdout $url || .zinit-download-file-stdout $url 1; } 2>/dev/null | command grep -o 'href=./'$user'/'$plugin'/releases/download/[^"]\+')"} )
