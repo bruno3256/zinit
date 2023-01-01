@@ -708,15 +708,14 @@ ZINIT[EXTENDED_GLOB]=""
     builtin emulate -LR zsh ${=${options[xtrace]:#off}:+-o xtrace}
     setopt extendedglob typesetsilent warncreateglobal
 
-    [[ $1 = -q ]] && +zinit-message "{pre}[self-update]{info} updating zinit repository{msg2}" \
+    [[ $1 = -q ]] && +zinit-message "{pre}[self-update]{info} updating zinit repository{rst}" \
 
-    local nl=$'\n' escape=$'\x1b['
+    local nl=$'\n' escape=$'\x1b[' file
     local current_branch=$(git -C $ZINIT[BIN_DIR] rev-parse --abbrev-ref HEAD)
-    # local current_branch='main'
     local -a lines
     (
         builtin cd -q "$ZINIT[BIN_DIR]" \
-        && +zinit-message -n "{pre}[self-update]{info} fetching latest changes from {obj}$current_branch{info} branch$nl{rst}" \
+        && +zinit-message -n "{pre}[self-update]{info} fetching latest changes from {obj}${current_branch}{info} branch{rst}{nl}" \
         && command git fetch --quiet \
         && lines=( ${(f)"$(command git log --color --date=short --pretty=format:'%Cgreen%cd %h %Creset%s %Cred%d%Creset || %b' ..origin/HEAD)"} )
         if (( ${#lines} > 0 )); then
@@ -740,24 +739,25 @@ ZINIT[EXTENDED_GLOB]=""
             command git pull --no-stat --quiet --ff-only origin main
         }
     )
-    if [[ $1 != -q ]] {
-        +zinit-message "{pre}[self-update]{info} compiling zinit via {obj}zcompile{rst}"
-    }
+    # if [[ $1 != -q ]] {
+    #     +zinit-message "{pre}[self-update]{info} compiling zinit via {obj}zcompile{rst}"
+    # }
     command rm -f $ZINIT[BIN_DIR]/*.zwc(DN)
-    zcompile -U $ZINIT[BIN_DIR]/zinit.zsh
-    zcompile -U $ZINIT[BIN_DIR]/zinit-{'side','install','autoload','additional'}.zsh
-    zcompile -U $ZINIT[BIN_DIR]/share/git-process-output.zsh
+    for file in $( print -nO ${ZINIT[BIN_DIR]}/{*,share/git-process-output}.zsh); do
+      zcompile -U ${file}
+    done
     # Load for the current session
     [[ $1 != -q ]] && +zinit-message "{pre}[self-update]{info} reloading zinit for the current session{rst}"
-
     # +zinit-message "{pre}[self-update]{info} resetting zinit repository via{rst}: {cmd}${ICE[reset]:-git reset --hard HEAD}{rst}"
     source $ZINIT[BIN_DIR]/zinit.zsh
-    zcompile -U $ZINIT[BIN_DIR]/zinit-{'side','install','autoload'}.zsh
-    # Read and remember the new modification timestamps
-    local file
-    for file ( "" -side -install -autoload ) {
-        .zinit-get-mtime-into "${ZINIT[BIN_DIR]}/zinit$file.zsh" "ZINIT[mtime$file]"
-    }
+    local -a files=( $(print -nO ${ZINIT[BIN_DIR]}/zinit{'',-{'side','install','additional'}}.zsh) )
+    for file in $files[@]; do
+      zcompile -U $file
+    done
+    # read and remember the new modification timestamps
+    for file in $files[@]; do
+      .zinit-get-mtime-into "$file" "$ZINIT[mtime$(basename ${file})]"
+    done
 } # ]]]
 # FUNCTION: .zinit-show-registered-plugins [[[
 # Lists loaded plugins (subcommands list, lodaded)

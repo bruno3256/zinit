@@ -995,7 +995,7 @@ ____
  Updates Zinit code (does a git pull)
 ____
 
-Has 42 line(s). Calls functions:
+Has 41 line(s). Calls functions:
 
  .zinit-self-update
  |-- zinit.zsh/+zinit-message
