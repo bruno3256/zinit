@@ -1496,7 +1496,9 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
       _ostype=unknown-freebsd
       ;;
     (Linux)
-      if [[ -n /lib/*musl*(#qN) ]] || (( ${+commands[musl-gcc]} )) { _clibtype="musl" }
+      if [[ -n /lib/*musl*(#qN) ]] || (( ${+commands[musl-gcc]} )) { 
+        _clibtype="musl"
+      }
       _ostype=linux-$_clibtype
       ;;
     (MINGW* | MSYS* | CYGWIN* | Windows_NT)
@@ -1526,7 +1528,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
       +zinit-message -n "{pre}gh-r:{error} unsupported CPU: {obj}$_cputype{rst}"
       ;;
   esac
-  RETVAL="${_ostype};${_cputype}"
+  RETVAL="${_cputype};${_ostype}"
   echo "${RETVAL}"
 } # ]]]
 
@@ -1566,13 +1568,13 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     armv6 'arm(-|v|)6'
     cygwin '(win((dows|32|64))|cygwin)'
     linux-android '(apk|android|linux-android)'
-    linux-gnu '*(linux|linux-gnu|unknown-linux-gnu(#e))*~*(android)*'
+    linux-gnu '(linux?_|linux-gnu|unknown-linux-gnu)'
     linux-gnueabihf 'linux[-_]gnueabihf'
     linux-musl '*(linux|linux-musl|unknown-linux-musl)*~*(android)*'
     linux-musleabihf 'linux[-_]musleabihf'
     msys '(win((dows|32|64))|cygwin)'
     windows '(win((dows|32|64))|cygwin)'
-    x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*((aarch|arm)64|)*'
+    x86_64 '(amd64|x86_64|x64)'
   )
     # x86_64 '(amd|amd64|x64|x86|x86_64|64bit|)*~*(linux32|eabi(hf|)|powerpc|ppc64(le|)|[-_]mips*|aarch64|riscv(64|)|s390x|[-_.]arm*)*'
   init_list=( ${(@f)"$( { .zinit-download-file-stdout $url || .zinit-download-file-stdout $url 1; } 2>/dev/null | command grep -o 'href=./'$user'/'$plugin'/releases/download/[^"]\+')"} )
@@ -1587,17 +1589,19 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
 
     filtered=( ${list[@]:#(#i)*([3-6]86|md5|sig|asc|txt|vsix|sum|sha256*|pkg|.(apk|deb|json|rpm|sh(#e)))*} ) \
       && (( $#filtered > 0 )) \
-      && list=( ${filtered[@]} )
+      && list=( ${filtered[@]} ) \
+      && +zinit-message "[{pre}gh-r{rst}]:{info} list ->{rst}{nl}${(@)filtered}{nl}"
 
     for part in "${parts[@]}"; do
       if (( $#list > 1 )) {
-        filtered=( ${(M)list[@]:##(#i)*((#s)|/)*${~matchstr[${part}]}*((#e)|/)*} ) \
+        filtered=( ${(M)list[@]:%%*(#ib)${~matchstr[${part}]}*} ) \
           && (( $#filtered > 0 )) \
           && list=( ${filtered[@]} )
         +zinit-message "[{pre}gh-r{rst}]:{info} filtered ->{rst}{nl} ${(@)filtered}{nl}"
       }
-      # if (( $#list > 1 )) { filtered=( ${(M)list[@]:#(#i)*((#s)|/)*${~matchstr[${parts[(e)2]}]}*((#e)|/)*} ); (( $#filtered > 0 )) && list=( ${filtered[@]} ) }
     done
+
+    # if (( $#list > 1 )) { filtered=( ${(M)list[@]:#(#i)*((#s)|[-_])${~matchstr[${parts[(e)2]}]}((#e)|[-_\.])*} ); (( $#filtered > 0 )) && list=( ${filtered[@]} ) }
     # if (( $#list > 1 )) { filtered=( ${(m)list[@]:#(#i)*((#s)|/)*${~matchstr[${parts[(e)2]}]}*((#e)|/)*} ); (( $#filtered > 0 )) && list=( ${filtered[@]} ) }
     #   +zinit-message "[{pre}gh-r{rst}]:{info} filtered ->{rst}{nl} ${(@)filtered}{nl}"
 
