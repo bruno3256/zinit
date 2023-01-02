@@ -1511,13 +1511,13 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
   case "$_ostype" in
     (Darwin)
       _ostype=apple-darwin
-      RETVAL="${_ostype};${_cputype};${_ostype};"
+      RETVAL="${_ostype};${_cputype};"
       ;;
     (FreeBSD)
       _ostype=unknown-freebsd
       ;;
     (Linux)
-      if [[ -n /lib/*musl*(#qN) ]] || (( ${+commands[musl-gcc]} )) { 
+      if [[ -n /lib/*musl*(#qN) ]] || (( ${+commands[musl-gcc]} )) {
         _clibtype="musl"
       }
       _ostype=linux-$_clibtype
@@ -1531,6 +1531,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
       +zinit-message -n "{pre}gh-r:{error} unsupported OS: {obj}$_ostype{rst}"
       ;;
   esac
+  # RETVAL="${_cputype};${_ostype};"
   echo "${RETVAL}"
 } # ]]]
 
@@ -1566,7 +1567,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
   local -A matchstr
   matchstr=(
     aarch64 '((arm|aarch)64)'
-    apple-darwin '(apple|darwin|dmg|macos[\.\?]|osx)'
+    apple-darwin '(apple|darwin|mac|macos[\_\.]|osx|dmg)'
     arm64 '(arm64|aarch64|arm(-|v|)8)'
     armv7 'arm(-|v|)7'
     armv6 'arm(-|v|)6'
@@ -1593,15 +1594,13 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
 
     filtered=( ${list[@]:#(#i)*([3-6]86|md5|sig|asc|txt|vsix|sum|sha256*|pkg|.(apk|deb|json|rpm|sh(#e)))*} ) \
       && (( $#filtered > 0 )) \
-      && list=( ${filtered[@]} ) \
-      && +zinit-message "[{pre}gh-r{rst}]:{info} list ->{rst}{nl}${(@)filtered}{nl}"
+      && list=( ${filtered[@]} )
+      # && +zinit-message "[{pre}gh-r{rst}]:{info} list ->{rst}{nl}${(@pj:\n:)filtered}"
 
     for part in "${parts[@]}"; do
       if (( $#list > 1 )) {
-        filtered=( ${(M)list[@]:%%*(#ib)${~matchstr[${part}]}*} ) \
-          && (( $#filtered > 0 )) \
-          && list=( ${filtered[@]} )
-        +zinit-message "[{pre}gh-r{rst}]:{info} filtered ->{rst}{nl} ${(@)filtered}{nl}"
+        filtered=( ${(Mo)list[@]:%%(#i)*${~matchstr[${part}]}##*} ) && (( $#filtered > 0 )) && list=( ${filtered[@]} )
+        +zinit-message "[{pre}gh-r{rst}]:{info} filtered ->{rst}{nl}  - ${(@pj:\n  - :)filtered}{nl}"
       }
     done
 

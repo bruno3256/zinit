@@ -210,7 +210,7 @@
   $fzf --version; assert $state equals 0
 }
 @test 'gaper' { # Builds and restarts a Go project when it crashes or some watched file changes
-  if [[ ! $OSTYPE =~ 'linux.*' ]]; then skip' '; fi
+  if [[ ! $OSTYPE =~ 'linux.*' ]]; then skip 'null'; fi
   run zinit lbin'!**/gaper' for @maxcnunes/gaper; assert $state equals 0
   local gaper="$ZBIN/gaper"; assert "$gaper" is_executable
   $gaper --version; assert $state equals 0
