@@ -1575,7 +1575,7 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || {
     linux-android '(apk|android|linux-android)'
     linux-gnu '(linux?_|linux-gnu|unknown-linux-gnu)'
     linux-gnueabihf 'linux[-_]gnueabihf'
-    linux-musl '*(linux|linux-musl|unknown-linux-musl)*~*(android)*'
+    linux-musl '(linux?_|linux-(gnu|musl)|unknown-linux-musl)'
     linux-musleabihf 'linux[-_]musleabihf'
     msys '(win((dows|32|64))|cygwin)'
     windows '(win((dows|32|64))|cygwin)'
